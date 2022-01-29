@@ -1,0 +1,14 @@
+name: pytorch_cuda_10_2
+channels:
+  - defaults
+dependencies:
+  - cudatoolkit=10.2
+  - torchaudio
+  - pytorch
+  - torchvision
+  - uproot
+  - pandas
+  - matplotlib
+  - tensorflow
+  - tensorflow-datasets
+prefix: /work/sesanche/anaconda3/envs/pytorch_cuda_10_2
