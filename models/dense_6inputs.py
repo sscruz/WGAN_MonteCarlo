@@ -6,9 +6,9 @@ class NNgenerator(torch.nn.Module):
         super().__init__()
         self.main_module = nn.Sequential(
             nn.Linear( 10, 40),
-            nn.Sigmoid(),
+            nn.ReLU(),
             nn.Linear( 40, 20),
-            nn.Sigmoid(),
+            nn.ReLU(),
             nn.Linear( 20, 6),
         )
         self.output=nn.ReLU(True)

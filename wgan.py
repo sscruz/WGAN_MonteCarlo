@@ -76,7 +76,6 @@ class WGAN_trainer:
                 images=data.__next__()
                 if (images.size()[0] != self.batch_size): # the dataset may not be multiple of the batch size
                     continue
-
                 real_data=self.get_torch_variable(images)
                 fake_data=self.get_torch_variable(self.generate_latent_space(self.batch_size) ) # TODO: the latent space is hardcoded, should be an input (use a lambda function in the models.)
                 loss_a=torch.mean(self.D(real_data)-self.D(self.G(fake_data)))
@@ -107,23 +106,30 @@ class WGAN_trainer:
             optim_generator.step()
             print(f'Generator iteration: {g_iter}/{self.generator_iters}, g_loss: {loss_b.data.cpu()}')
 
-        # to plot 
-        values_g_loss_data     .append(loss_b.data.cpu() )
-        values_d_loss_fake_data.append(loss_a_fake_data   )
-        values_d_loss_real_data.append(loss_a_real_data   )
+            # to plot 
+            values_g_loss_data     .append(loss_b.data.cpu() )
+            values_d_loss_fake_data.append(loss_a_fake_data   )
+            values_d_loss_real_data.append(loss_a_real_data   )
+
+            if not (g_iter%1000):
+                self.save_model(label=f"gen_iter_{g_iter}")
+                self.generate_samples(1000, label=f"gen_iter_{g_iter}", load_model=False)
+
         
-        plt.figure(1)
-        plt.plot( range(len(values_g_loss_data     )),values_g_loss_data      )
-        plt.plot( range(len(values_d_loss_fake_data)),values_d_loss_fake_data )
-        plt.plot( range(len(values_d_loss_real_data)),values_d_loss_real_data )
+        fig, ax = plt.subplots()
+        plot1=ax.plot( range(len(values_g_loss_data     )),values_g_loss_data      , label='loss generator')
+        plot2=ax.plot( range(len(values_d_loss_fake_data)),values_d_loss_fake_data , label='loss critic fake data')
+        plot3=ax.plot( range(len(values_d_loss_real_data)),values_d_loss_real_data , label='loss critic real data')
+        plt.legend(handles=[plot1[0],plot2[0],plot3[0]])
         plt.savefig('training_%s.png'%self._options.trainingLabel)
-        
+        ax.clear()
+        plt.close()
         self.save_model()
 
-    def save_model(self):
-        torch.save(self.G.state_dict(), './%s_generator.pkl'%self._options.trainingLabel)
-        torch.save(self.D.state_dict(), './%s_discriminator.pkl'%self._options.trainingLabel)
-        print(f'Models save to ./{self._options.trainingLabel}_generator.pkl & ./{self._options.trainingLabel}_discriminator.pkl ')
+    def save_model(self,label=""):
+        torch.save(self.G.state_dict(), f'{self._options.trainingLabel}_generator_{label}.pkl')
+        torch.save(self.D.state_dict(), f'{self._options.trainingLabel}_discriminator_{label}.pkl')
+        print(f'Models save to {self._options.trainingLabel}_discriminator_{label}.pkl & {self._options.trainingLabel}_generator_{label}.pkl')
 
     def load_model(self):
         # usually postprocessing is done in the cpu, but could be customized in the future
@@ -131,14 +137,16 @@ class WGAN_trainer:
         self.D.load_state_dict(torch.load(f'./{self._options.trainingLabel}_discriminator.pkl',map_location=torch.device('cpu'))) 
 
 
-    def generate_samples(self, number_of_samples):
-        self.load_model()
+    def generate_samples(self, number_of_samples, label="",load_model=True):
+        if load_model:
+            self.load_model()
         samples=[]
         for _ in range(number_of_samples):
             z=self.get_torch_variable(self.generate_latent_space(1) )
             sample=self.G(z).data.cpu()
-            samples.append( self.postProcessSamples( sample )  ) 
-
+            samples.append( sample ) 
+            print(sample)
+        self.postProcessSamples( samples, label ) 
 
 if __name__=="__main__":
 
@@ -163,4 +171,4 @@ if __name__=="__main__":
         model.trainIt()
 
     if 'generate' in options.do_what:
-        model.generate_samples(10)
+        model.generate_samples(1000)

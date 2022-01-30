@@ -1,10 +1,13 @@
 import os, uproot, torch
 import torch.utils.data as data
-
-
+import uproot3_methods
+import matplotlib.pyplot as plt
+import pandas as pd
 class DrellYan_GenLevel(data.Dataset):
     urls = [
-        ("https://drive.switch.ch/index.php/s/btxKebeKBaV3YT5/download","DYJets_merged_Friend.root")
+        ("https://cernbox.cern.ch/index.php/s/k7PCvm3U4fpHvhO/download","DYJets_1.root"),
+        ("https://cernbox.cern.ch/index.php/s/mMPCESPDWyqO8ra/download","DYJets_2.root"),
+        ("https://cernbox.cern.ch/index.php/s/qMnl4JfZJkwaTBE/download","DYJets_3.root"),
     ]
     raw_folder = 'raw_dy'
     processed_folder = 'processed_dy'
@@ -72,12 +75,13 @@ def read_root_files(paths):
     data=None
     for path in paths:
         tf=uproot.open(path)
-        tree=tf['Friends']
+        tree=tf['Events']
         if data is None: 
             data=tree.arrays(tree.keys(), library='pd')
         else:
-            data.append(tree.arrays(tree.keys(), library='pd'))
+            data=pd.concat([data,tree.arrays(tree.keys(), library='pd')])
 
+        print(data.size)
     return torch.tensor(data.values)
 
 
@@ -94,10 +98,23 @@ class dygen_data_loader:
 
         return train_dataloader, None
 
-    def postProcess(self, sample):
-        return sample
+    def postProcess(self, samples, label):
+        # in this case we will plot mll, but we could do something else
+        mll=[]
+        for samp in samples:
+            samp=samp.numpy()
+            lep1 = uproot3_methods.TLorentzVectorArray.from_ptetaphim( samp[:,0], samp[:,1], samp[:,2], 0)
+            lep2 = uproot3_methods.TLorentzVectorArray.from_ptetaphim( samp[:,3], samp[:,4], samp[:,5], 0)
+            mll.append( (lep1+lep2).mass[0] ) 
+        fig, ax = plt.subplots()
+        ax.hist( mll ) 
+        plt.savefig('mll%s.png'%label)
+        ax.clear()
+        plt.close()
 
     def get_postProcessor(self):
-        return lambda samples : self.postProcess(samples)
+        return lambda samples, label : self.postProcess(samples, label)
+        
 
+    
 
