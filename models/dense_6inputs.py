@@ -5,17 +5,15 @@ class NNgenerator(torch.nn.Module):
     def __init__(self):
         super().__init__()
         self.main_module = nn.Sequential(
-            nn.Linear( 10, 40),
-            nn.ReLU(),
-            nn.Linear( 40, 20),
-            nn.ReLU(),
-            nn.Linear( 20, 6),
+            nn.Linear( 10, 60),
+            nn.ReLU(True),
+            nn.Linear( 60, 40),
+            nn.ReLU(True),
+            nn.Linear( 40, 6),
         )
-        self.output=nn.ReLU(True)
 
     def forward(self, x):
-        x = self.main_module(x)
-        return self.output(x)
+        return self.main_module(x)
 
 class NNcritic(torch.nn.Module):
     def __init__(self):

@@ -127,8 +127,8 @@ class WGAN_trainer:
         self.save_model()
 
     def save_model(self,label=""):
-        torch.save(self.G.state_dict(), f'{self._options.trainingLabel}_generator_{label}.pkl')
-        torch.save(self.D.state_dict(), f'{self._options.trainingLabel}_discriminator_{label}.pkl')
+        torch.save(self.G.state_dict(), f'{self._options.trainingLabel}_generator{label}.pkl')
+        torch.save(self.D.state_dict(), f'{self._options.trainingLabel}_discriminator{label}.pkl')
         print(f'Models save to {self._options.trainingLabel}_discriminator_{label}.pkl & {self._options.trainingLabel}_generator_{label}.pkl')
 
     def load_model(self):

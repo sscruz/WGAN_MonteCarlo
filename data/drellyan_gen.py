@@ -107,7 +107,7 @@ class dygen_data_loader:
             lep2 = uproot3_methods.TLorentzVectorArray.from_ptetaphim( samp[:,3], samp[:,4], samp[:,5], 0)
             mll.append( (lep1+lep2).mass[0] ) 
         fig, ax = plt.subplots()
-        ax.hist( mll ) 
+        ax.hist( mll , range =(0,500), bins=100) 
         plt.savefig('mll%s.png'%label)
         ax.clear()
         plt.close()
