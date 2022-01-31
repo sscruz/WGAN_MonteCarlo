@@ -6,22 +6,20 @@ Code to generate MC simulations with WGANs. It includes examples to train a gene
 
 The `environment.yml` file contains the packages needed to run the code with pytorch and CUDA 10.2. 
 
-```
-conda env create -f environment.yml
 
-conda activate pytorch_v1_cuda_10_2
+```conda env create -f environment.yml```
 
-```
+```conda activate pytorch_v1_cuda_10_2```
 
 ## Examples with different datasets
 
 ### Generate images using the MNIST dataset
 
-`python wgan.py --generator_iters 40000  --model convNNforNist --data mnist --trainingLabel mnisttraining  --do_what train --do_what generate`
+```python wgan.py --generator_iters 40000  --model convNNforNist --data mnist --trainingLabel mnisttraining  --do_what train --do_what generate```
 
 ### Generate Drell-Yan events using gen-level MC
 
-`python wgan.py --generator_iters 100000  --model dense6inputs --data dygen --trainingLabel dytraining --do_what train --do_what generate`
+```python wgan.py --generator_iters 100000  --model dense6inputs --data dygen --trainingLabel dytraining --do_what train --do_what generate```
 
 
 ## Package contents
