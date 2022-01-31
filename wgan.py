@@ -172,4 +172,4 @@ if __name__=="__main__":
         model.trainIt()
 
     if 'generate' in options.do_what:
-        model.generate_samples(self._options.n_samples)
+        model.generate_samples(options.n_samples)
