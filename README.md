@@ -19,7 +19,7 @@ The `environment.yml` file contains the packages needed to run the code with pyt
 
 ### Generate Drell-Yan events using gen-level MC
 
-```python wgan.py --generator_iters 100000  --model dense6inputs --data dygen --trainingLabel dytraining --do_what train --do_what generate```
+```python wgan.py --generator_iters 100000  --model dense6inputs --data dygen --trainingLabel dytraining --do_what train --do_what generate --n_samples 10000 ```
 
 
 ## Package contents

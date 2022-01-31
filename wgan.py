@@ -113,7 +113,7 @@ class WGAN_trainer:
 
             if not (g_iter%1000):
                 self.save_model(label=f"gen_iter_{g_iter}")
-                self.generate_samples(1000, label=f"gen_iter_{g_iter}", load_model=False)
+                self.generate_samples(self._options.n_samples, label=f"gen_iter_{g_iter}", load_model=False)
 
         
         fig, ax = plt.subplots()
@@ -164,6 +164,7 @@ if __name__=="__main__":
     parser.add_option("--cuda_index",           dest="cuda_index", type="int", default=0, help="Index of the device to use");
     parser.add_option("--do_what",           dest="do_what", action='append', type="string", default=[], help="What to do");
     parser.add_option("--trainingLabel",           dest="trainingLabel",  type="string", default='trainingv1', help="Label where store to/read from the models");
+    parser.add_option("--n_samples",           dest="n_samples",  type="int", default=12, help="Number of samples to be generated");
     (options, args) = parser.parse_args()
 
     model = WGAN_trainer(options)
@@ -171,4 +172,4 @@ if __name__=="__main__":
         model.trainIt()
 
     if 'generate' in options.do_what:
-        model.generate_samples(1000)
+        model.generate_samples(self._options.n_samples)

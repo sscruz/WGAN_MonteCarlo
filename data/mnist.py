@@ -1,5 +1,5 @@
 from __future__ import print_function
-import torch.utils as utils
+import torchvision.utils as utils
 import torch.utils.data as data
 import torchvision.transforms as transforms
 from PIL import Image
@@ -198,13 +198,16 @@ class mnist_data_loader:
 
         return train_dataloader, test_dataloader
 
-    def postProcess(self, sample):
+    def postProcess(self, samples, label):
         channels=1
-        sample=sample.mul(0.5).add(0.5) # denormalize
-        sample=sample.view( channels, 32,32).data.cpu()
-        grid=utils.make_grid( sample, n_row=4) 
-        utils.save_image( grid, "images.png")
+        thesamples=[]
+        for sample in samples:
+            sample=sample.mul(0.5).add(0.5) # denormalize
+            sample=sample.view( channels, 32,32).data.cpu()
+            thesamples.append(sample)
+        grid=utils.make_grid( thesamples, n_row=4) 
+        utils.save_image( grid, f"images{label}.png")
         return sample
 
     def get_postProcessor(self):
-        return lambda samples : self.postProcess(samples)
+        return lambda samples, label : self.postProcess(samples, label)
